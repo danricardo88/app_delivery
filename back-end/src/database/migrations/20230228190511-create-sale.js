@@ -37,12 +37,12 @@ module.exports = {
         allowNull: false,
       },
       deliveryAddress: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         field: 'delivery_address',
         allowNull: false,
       },
       deliveryNumber: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         field: 'delivery_number',
         allowNull: false,
       },
@@ -51,7 +51,7 @@ module.exports = {
         field: 'sale_date',
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       }
      });
