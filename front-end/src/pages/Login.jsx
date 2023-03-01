@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const buttonCondition = () => {
     const emailRegex = /\S+@\S+\.\S+/;
@@ -12,9 +13,14 @@ function Login() {
     return !(emailCondition && passwordCondition);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrorMessage(true);
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={ handleSubmit }>
         <h1>TRYBE DELIVERY</h1>
         <div>
           <label htmlFor="email-input">
@@ -39,8 +45,6 @@ function Login() {
               data-testid="common_login__input-password"
               placeholder="*******"
               name="password"
-              minLength="6"
-              required
               value={ password }
               onChange={ ({ target }) => setPassword(target.value) }
             />
@@ -62,6 +66,14 @@ function Login() {
           </button>
         </div>
       </form>
+      { errorMessage
+        ? (
+          <span
+            data-testid="common_login__element-invalid-email"
+          >
+            Usuário ou senha inválidos
+          </span>
+        ) : null}
     </div>
   );
 }
