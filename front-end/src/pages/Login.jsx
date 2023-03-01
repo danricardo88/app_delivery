@@ -37,7 +37,7 @@ function Login() {
               type="password"
               id="password-input"
               data-testid="common_login__input-password"
-              placeholder="********"
+              placeholder="*******"
               name="password"
               minLength="6"
               required
