@@ -1,9 +1,9 @@
 import { UserModel } from '../database/models';
 
 const login = async (email, password) => {
-  const userLogin = await UserModel.findOne({ where: { email,password } });
+  const userLogin = await UserModel.findOne({ where: { email, password } });
 
-  return userLogin
-}
+  return userLogin;
+};
 
 export default { login };
