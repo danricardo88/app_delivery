@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     totalPrice: DataTypes.DOUBLE,
     deliveryAddress: DataTypes.STRING,
     deliveryNumber: DataTypes.STRING,
-    saleDate: DataTypes.DATETIME,
+    saleDate: DataTypes.DATE,
     status: DataTypes.STRING,
   }, 
   {
@@ -25,8 +25,8 @@ module.exports = (sequelize, DataTypes) => {
   modelName: 'sales',
   });
 
-  User.associate = (models) => {
-    User.hasMany(models.User,
+  Sale.associate = (models) => {
+    Sale.hasMany(models.User,
       { foreignKey: 'user_id', as: 'user' }, 
       { foreignKey: 'seller_id', as: 'seller' });
   };
