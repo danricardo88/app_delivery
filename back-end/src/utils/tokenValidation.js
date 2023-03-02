@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+
 const SECRET = 'secret_key';
 
 const confidential = SECRET;

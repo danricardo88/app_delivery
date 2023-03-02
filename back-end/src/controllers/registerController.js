@@ -14,12 +14,12 @@ const register = async (req, res) => {
   if (error) return res.status(400).json({ message: 'Some fields are invalid' });
 
   const findUser = await registerService.findUser(user);
-  if (findUser) return res.status(409).json({ message: 'User already exist'});
+  if (findUser) return res.status(409).json({ message: 'User already exist' });
   
   const newUser = await registerService.register(user);
   return res.status(201).json(newUser);
-}
+};
 
 module.exports = {
   register,
-}
+};

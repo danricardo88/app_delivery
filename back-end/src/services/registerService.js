@@ -1,7 +1,7 @@
 const md5 = require('md5');
-const { User } = require('../database/models');
 const { Op: { or } } = require('sequelize');
-const { createToken } = require('../utils/tokenValidation')
+const { User } = require('../database/models');
+const { createToken } = require('../utils/tokenValidation');
 
 const register = async ({ name, email, password }) => {
   const role = 'customer';
@@ -10,18 +10,16 @@ const register = async ({ name, email, password }) => {
 
   const token = await createToken(email, role);
   return { token, email, role, name, password: hash };
-
 };
 
 const findUser = async (user) => {
   const { email, name } = user;
   return User.findOne({ where: { 
-    [or]: [{ email }, { name }]
+    [or]: [{ email }, { name }],
    } });
 };
-
 
 module.exports = {
   register,
   findUser,
-}
+};
