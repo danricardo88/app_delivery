@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-// import { post } from '../utils/api';
+import { post } from '../utils/api';
+import { setLocalStorage } from '../utils/storage';
 
 function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [errorMessage, setErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const minLengthPassword = 6;
   const minLengthName = 12;
@@ -19,11 +20,20 @@ function Register() {
   const history = useHistory();
 
   const register = async () => {
-    // const response = await post('register', { email, password, name });
+    let userRegister;
 
-    // if (response.message) {
-    //   return setErrorMessage(response.message);
-    // }
+    try {
+      const response = await post('register', { email, password, name });
+      userRegister = response;
+    } catch (error) {
+      userRegister = error;
+    }
+
+    if (userRegister.response) {
+      return setErrorMessage(userRegister.response);
+    }
+
+    setLocalStorage('user', { name, email });
 
     history.push('/customer/products');
   };
@@ -34,7 +44,7 @@ function Register() {
         <h1>Cadastro</h1>
         <div>
           <label htmlFor="name">
-            Name
+            Nome
             <input
               type="text"
               data-testid="common_register__input-name"
@@ -75,11 +85,11 @@ function Register() {
         </button>
       </form>
       {
-        // errorMessage && (
-        <span data-testid="common_login__element-invalid_register">
-          Mensagem de error
-        </span>
-        // )
+        errorMessage && (
+          <span data-testid="common_register__element-invalid_register">
+            Usuário já cadastrado
+          </span>
+        )
       }
     </div>
   );
