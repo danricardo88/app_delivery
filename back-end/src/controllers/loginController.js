@@ -1,4 +1,4 @@
-import loginService from '../services/loginService';
+const loginService = require('../services/loginService');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -10,4 +10,6 @@ const login = async (req, res) => {
   return res.status(200).json(result);
 };
 
-export default login;
+module.exports = {
+  login,
+};

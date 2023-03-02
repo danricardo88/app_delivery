@@ -1,4 +1,4 @@
-import { UserModel } from '../database/models';
+const { UserModel } = require('../database/models');
 
 const login = async (email, password) => {
   const userLogin = await UserModel.findOne({ where: { email, password } });
@@ -6,4 +6,6 @@ const login = async (email, password) => {
   return userLogin;
 };
 
-export default { login };
+module.exports = { 
+  login,
+};
