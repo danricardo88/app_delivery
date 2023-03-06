@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import CustomerProducts from './pages/CustomerProducts';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         </Route>
         <Route exact path="/login" component={ Login } />
         <Route exact path="/register" component={ Register } />
+        <Route exact path="/customer/products" component={ CustomerProducts } />
       </Switch>
     </div>
   );
