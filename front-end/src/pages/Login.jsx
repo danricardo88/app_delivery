@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { post } from '../utils/api';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -13,17 +14,28 @@ function Login() {
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
   };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setErrorMessage(true);
-  };
-
   const history = useHistory();
+
+  const login = async (e) => {
+    e.preventDefault();
+    let userRegister;
+
+    try {
+      const response = await post('login', { email, password });
+      userRegister = response;
+    } catch (error) {
+      userRegister = error;
+    }
+
+    if (userRegister.response) {
+      return setErrorMessage(userRegister.response);
+    }
+    history.push('/customer/products');
+  };
 
   return (
     <div>
-      <form onSubmit={ handleSubmit }>
+      <form>
         <h1>TRYBE DELIVERY</h1>
         <div>
           <label htmlFor="email-input">
@@ -58,6 +70,7 @@ function Login() {
             type="submit"
             data-testid="common_login__button-login"
             disabled={ buttonCondition() }
+            onClick={ (e) => login(e) }
           >
             LOGIN
           </button>
