@@ -14,6 +14,7 @@ function Login() {
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
   };
+  const history = useHistory();
 
   const login = async (e) => {
     e.preventDefault();
@@ -29,9 +30,8 @@ function Login() {
     if (userRegister.response) {
       return setErrorMessage(userRegister.response);
     }
+    history.push('/customer/products');
   };
-
-  const history = useHistory();
 
   return (
     <div>

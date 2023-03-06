@@ -1,10 +1,9 @@
-const { UserModel } = require('../database/models');
+const { User } = require('../database/models');
+const md5 = require('md5');
 
 const login = async (email, password) => {
-  const userLogin = await UserModel.findOne({ where: { email, password } });
-  console.log(userLogin);
-
-  return userLogin;
+  const userLogin = await User.findOne({ where: { email } })
+    return userLogin;
 };
 
 module.exports = { 
