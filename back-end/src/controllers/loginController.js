@@ -1,11 +1,12 @@
 const loginService = require('../services/loginService');
+const md5 = require('md5');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  const result = await loginService.login(email, password);
-  console.log('r');
-  if (!result) {
-    return res.status(404).json('User not found');
+  const hash = md5(password);
+  const result = await loginService.login(email);
+  if (!result || hash !== result.password) {
+    return res.status(404).json({ message: 'Invalid fields' });
   }
   return res.status(200).json(result);
 };
