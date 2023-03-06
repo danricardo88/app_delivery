@@ -1,5 +1,5 @@
-const loginService = require('../services/loginService');
 const md5 = require('md5');
+const loginService = require('../services/loginService');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
