@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -17,6 +18,8 @@ function Login() {
     event.preventDefault();
     setErrorMessage(true);
   };
+
+  const history = useHistory();
 
   return (
     <div>
@@ -61,6 +64,7 @@ function Login() {
           <button
             type="button"
             data-testid="common_login__button-register"
+            onClick={ () => history.push('register') }
           >
             Ainda não tenho conta
           </button>

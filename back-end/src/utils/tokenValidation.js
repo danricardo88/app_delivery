@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
-const SECRET = require('../../jwt.evaluation.key');
+
+const SECRET = 'secret_key';
 
 const confidential = SECRET;
 
 const jwtConfig = {
-  algarithm: 'HS256',
+  algorithm: 'HS256',
   expiresIn: '1d',
 };
 
