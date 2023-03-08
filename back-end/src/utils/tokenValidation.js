@@ -16,4 +16,9 @@ const createToken = (pass) => {
     return token;
 };
 
-module.exports = { createToken };
+const verifyTokenJWT = (token) => {
+  const payload = jwt.verify(token, confidential);
+  return payload;
+};
+
+module.exports = { createToken, verifyTokenJWT };

@@ -1,15 +1,17 @@
+// import axios from 'axios';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { post } from '../utils/api';
+import { setLocalStorage } from '../utils/storage';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [userEmail, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
 
   const buttonCondition = () => {
     const emailRegex = /\S+@\S+\.\S+/;
-    const emailCondition = emailRegex.test(email);
+    const emailCondition = emailRegex.test(userEmail);
     const minLength = 5;
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
@@ -21,8 +23,10 @@ function Login() {
     let userRegister;
 
     try {
-      const response = await post('login', { email, password });
+      const { response } = await post('login', { userEmail, password });
       userRegister = response;
+      const { name, email } = response;
+      setLocalStorage('user', { name, email });
     } catch (error) {
       userRegister = error;
     }
@@ -30,6 +34,7 @@ function Login() {
     if (userRegister.response) {
       return setErrorMessage(userRegister.response);
     }
+
     history.push('/customer/products');
   };
 
@@ -46,7 +51,7 @@ function Login() {
               id="email-input"
               placeholder="email@trybeer.com.br"
               name="email"
-              value={ email }
+              value={ userEmail }
               onChange={ ({ target }) => setEmail(target.value) }
             />
           </label>
