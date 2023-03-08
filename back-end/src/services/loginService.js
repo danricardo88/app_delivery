@@ -8,7 +8,7 @@ const login = async (email) => {
 const findAllUsers = async () => {
   const users = await User.findAll();
   return users;
-}
+};
 
 module.exports = { 
   login,
