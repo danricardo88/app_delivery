@@ -4,6 +4,7 @@ const path = require('path');
 const loginRouter = require('../routes/loginRouter');
 const registerRouter = require('../routes/registerRouter');
 const productsRouter = require('../routes/productsRouter');
+const salesRouter = require('../routes/salesRouter');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/products', productsRouter);
+app.use('/sales', salesRouter);
 
 app.use('/images', express.static(imagePath));
 
