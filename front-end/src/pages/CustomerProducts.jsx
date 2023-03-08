@@ -1,12 +1,27 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+// import { get } from '../utils/api';
+// import { getLocalStorage } from '../utils/storage';
 import CustomerNavBar from '../components/CustomerNavBar';
 
 function CustomerProducts() {
   const [qnt, setQnt] = useState(0);
   const [productsDetails, setProductsDetais] = useState(false);
   const history = useHistory();
+
+  // const { token } = getLocalStorage('user');
+
+  // const getProducts = async () => {
+  //   const response = await get('products', {
+  //     headers: {
+  //       Authorization: token,
+  //     },
+  //   });
+
+  //   const items = response.data;
+  //   setProductsDetais([...items]);
+  // };
 
   const getProducts = async () => {
     const { data } = await axios.get('http://localhost:3001/products');
@@ -46,7 +61,8 @@ function CustomerProducts() {
           <div key={ id } data-testid="customer_products__button-cart">
             <p data-testid={ `customer_products__element-card-title-${id}` }>{ name }</p>
             <p data-testid={ `customer_products__element-card-price-${id}` }>
-              { price.replace('.', ',') }
+              {/* { price.replace('.', ',')} */}
+              { price }
             </p>
             <img
               className="img-products"
@@ -82,7 +98,7 @@ function CustomerProducts() {
         ))
       }
       <button
-        onClick={ () => history('/customer/checkout') }
+        onClick={ () => history.push('/customer/checkout') }
         type="button"
         className="btn-checkout"
         data-testid="customer_products__button-cart"

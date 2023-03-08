@@ -1,22 +1,26 @@
 const md5 = require('md5');
 const loginService = require('../services/loginService');
+const tokenValidation = require('../utils/tokenValidation');
 
 const login = async (req, res) => {
-  const { userEmail, password } = req.body;
+  const { email, password } = req.body;
   const hash = md5(password);
-  const result = await loginService.login(userEmail);
+
+  const result = await loginService.login(email);
   if (!result || hash !== result.password) {
     return res.status(404).json({ message: 'Invalid fields' });
   }
-  return res.status(200).json(result);
+
+  const token = await tokenValidation.createToken(email);
+  return res.status(200).json({ token });
 };
 
-// const showUser = async (req, res) => {
-//   const { userEmail } = req.body;
-//   const result = await loginService.login(userEmail);
-//   return res.status(200).json(result);
-// }
+const findAllUsers = async (_req, res) => {
+  const users = await loginService.findAllUsers();
+  return res.status(200).json(users);
+};
 
 module.exports = {
   login,
+  findAllUsers,
 };

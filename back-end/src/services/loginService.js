@@ -5,6 +5,12 @@ const login = async (email) => {
   return userLogin;
 };
 
+const findAllUsers = async () => {
+  const users = await User.findAll();
+  return users;
+}
+
 module.exports = { 
   login,
+  findAllUsers,
 };

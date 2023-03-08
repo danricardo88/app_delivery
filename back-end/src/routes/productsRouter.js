@@ -1,8 +1,10 @@
 const express = require('express');
 const productsController = require('../controllers/productsController');
+// const { validateTokenMiddle } = require('../middlewares/tokenMiddlewares');
 
-const registerRouter = express.Router();
+const productsRouter = express.Router();
 
-registerRouter.get('/', productsController.getAll);
+// colocar middleware do token
+productsRouter.get('/', productsController.getAll);
 
-module.exports = registerRouter;
+module.exports = productsRouter;

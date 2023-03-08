@@ -9,16 +9,23 @@ const jwtConfig = {
   expiresIn: '1d',
 };
 
-const createToken = (pass) => {
-  const token = jwt.sign({ data: { userId: pass } },
+const createToken = (email) => {
+  const token = jwt.sign({ email },
     confidential, jwtConfig);
 
     return token;
 };
 
 const verifyTokenJWT = (token) => {
-  const payload = jwt.verify(token, confidential);
-  return payload;
+  try {
+    if (!token) return { error: 'token not found' };
+    const payload = jwt.verify(token, confidential);
+    if (!jwtConfig.expiresIn) return { error: 'Expired or invalid token' };
+    return payload;
+  } catch (err) {
+    return { error: err.message };
+  }
 };
+
 
 module.exports = { createToken, verifyTokenJWT };

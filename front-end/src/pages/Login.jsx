@@ -5,13 +5,13 @@ import { post } from '../utils/api';
 import { setLocalStorage } from '../utils/storage';
 
 function Login() {
-  const [userEmail, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(false);
 
   const buttonCondition = () => {
     const emailRegex = /\S+@\S+\.\S+/;
-    const emailCondition = emailRegex.test(userEmail);
+    const emailCondition = emailRegex.test(email);
     const minLength = 5;
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
@@ -23,10 +23,10 @@ function Login() {
     let userRegister;
 
     try {
-      const { response } = await post('login', { userEmail, password });
+      const response = await post('login', { email, password });
       userRegister = response;
-      const { name, email } = response;
-      setLocalStorage('user', { name, email });
+      const { name, email: userEmail, role, token } = userRegister;
+      setLocalStorage('user', { name, email: userEmail, role, token });
     } catch (error) {
       userRegister = error;
     }
@@ -51,7 +51,7 @@ function Login() {
               id="email-input"
               placeholder="email@trybeer.com.br"
               name="email"
-              value={ userEmail }
+              value={ email }
               onChange={ ({ target }) => setEmail(target.value) }
             />
           </label>
