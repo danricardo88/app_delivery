@@ -61,8 +61,7 @@ function CustomerProducts() {
           <div key={ id } data-testid="customer_products__button-cart">
             <p data-testid={ `customer_products__element-card-title-${id}` }>{ name }</p>
             <p data-testid={ `customer_products__element-card-price-${id}` }>
-              {/* { price.replace('.', ',')} */}
-              { price }
+              { price.toFixed(2).toString().replace('.', ',')}
             </p>
             <img
               className="img-products"
