@@ -29,7 +29,6 @@ const updateStatus = async (id, status) => {
   return update;
 };
 
-
 const getSaleById = async (id) => {
   const sales = await Sale.findOne({
     where: { id },
