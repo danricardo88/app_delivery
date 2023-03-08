@@ -9,7 +9,7 @@ function CustomerNavBar() {
 
   useEffect(() => {
     const user = getLocalStorage('user');
-    setName(user);
+    setName(user.name);
   }, []);
 
   const logOut = () => {
