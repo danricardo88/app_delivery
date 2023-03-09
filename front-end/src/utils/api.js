@@ -4,6 +4,4 @@ const post = async (route, data) => axios.post(`http://localhost:3001/${route}`,
 
 const get = async (route, data) => axios.post(`http://localhost:3001/${route}`, data);
 
-const d = '';
-
-export { post, get, d };
+export { post, get };

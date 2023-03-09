@@ -1,8 +1,9 @@
 const express = require('express');
 const productsController = require('../controllers/productsController');
+const { validateTokenMiddle } = require('../middlewares/tokenMiddlewares');
 
-const registerRouter = express.Router();
+const productsRouter = express.Router();
 
-registerRouter.get('/', productsController.getAll);
+productsRouter.get('/', validateTokenMiddle, productsController.getAll);
 
-module.exports = registerRouter;
+module.exports = productsRouter;

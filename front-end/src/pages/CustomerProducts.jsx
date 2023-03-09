@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { getLocalStorage } from '../utils/storage';
 import CustomerNavBar from '../components/CustomerNavBar';
 
 function CustomerProducts() {
@@ -8,8 +9,10 @@ function CustomerProducts() {
   const [productsDetails, setProductsDetais] = useState(false);
   const history = useHistory();
 
+  const { token } = getLocalStorage('user');
+
   const getProducts = async () => {
-    const { data } = await axios.get('http://localhost:3001/products');
+    const { data } = await axios.get('http://localhost:3001/products', { headers: { Authorization: token } });
     const cart = data.map((product) => ({ ...product, quantity: 0 }));
     setProductsDetais([[...cart], { totalPrice: 0.00 }]);
   };
@@ -36,7 +39,6 @@ function CustomerProducts() {
     getProducts();
   }, []);
   if (!productsDetails) return <p>Loading</p>;
-  console.log(qnt);
 
   return (
     <div>
@@ -46,7 +48,7 @@ function CustomerProducts() {
           <div key={ id } data-testid="customer_products__button-cart">
             <p data-testid={ `customer_products__element-card-title-${id}` }>{ name }</p>
             <p data-testid={ `customer_products__element-card-price-${id}` }>
-              { price.replace('.', ',') }
+              { price.toString().replace('.', ',')}
             </p>
             <img
               className="img-products"
@@ -82,7 +84,7 @@ function CustomerProducts() {
         ))
       }
       <button
-        onClick={ () => history('/customer/checkout') }
+        onClick={ () => history.push('/customer/checkout') }
         type="button"
         className="btn-checkout"
         data-testid="customer_products__button-cart"

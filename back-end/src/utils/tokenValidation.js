@@ -1,24 +1,29 @@
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'secret_key';
-
-const confidential = SECRET;
+const jwtKey = fs.readFileSync('jwt.evaluation.key');
 
 const jwtConfig = {
   algorithm: 'HS256',
   expiresIn: '1d',
 };
 
-const createToken = (pass) => {
-  const token = jwt.sign({ data: { userId: pass } },
-    confidential, jwtConfig);
+const createToken = (email) => {
+  const token = jwt.sign({ email },
+    jwtKey, jwtConfig);
 
     return token;
 };
 
 const verifyTokenJWT = (token) => {
-  const payload = jwt.verify(token, confidential);
-  return payload;
+  try {
+    if (!token) return { error: 'token not found' };
+    const payload = jwt.verify(token, jwtKey);
+    if (!jwtConfig.expiresIn) return { error: 'Expired or invalid token' };
+    return payload;
+  } catch (err) {
+    return { error: err.message };
+  }
 };
 
 module.exports = { createToken, verifyTokenJWT };
