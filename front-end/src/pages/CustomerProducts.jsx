@@ -1,18 +1,16 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getLocalStorage } from '../utils/storage';
 import CustomerNavBar from '../components/CustomerNavBar';
+import { setLocalStorage } from '../utils/storage';
 
 function CustomerProducts() {
   const [qnt, setQnt] = useState(0);
   const [productsDetails, setProductsDetais] = useState(false);
   const history = useHistory();
 
-  const { token } = getLocalStorage('user');
-
   const getProducts = async () => {
-    const { data } = await axios.get('http://localhost:3001/products', { headers: { Authorization: token } });
+    const { data } = await axios.get('http://localhost:3001/products');
     const cart = data.map((product) => ({ ...product, quantity: 0 }));
     setProductsDetais([[...cart], { totalPrice: 0.00 }]);
   };
@@ -35,10 +33,24 @@ function CustomerProducts() {
     setQnt(Number(value));
   };
 
+  const pushToCheckout = () => {
+    setLocalStorage(
+      'Total',
+      productsDetails[1].totalPrice.toFixed(2).replace('.', ','),
+    );
+    const result = productsDetails[0].filter((product) => product.quantity > 0);
+    for (let i = 0; i < result.length; i += 1) {
+      result[i].id = i;
+    }
+    setLocalStorage('CartItems', result);
+    history.push('/customer/checkout');
+  };
+
   useEffect(() => {
     getProducts();
   }, []);
   if (!productsDetails) return <p>Loading</p>;
+  // console.log(productsDetails);
 
   return (
     <div>
@@ -48,7 +60,7 @@ function CustomerProducts() {
           <div key={ id } data-testid="customer_products__button-cart">
             <p data-testid={ `customer_products__element-card-title-${id}` }>{ name }</p>
             <p data-testid={ `customer_products__element-card-price-${id}` }>
-              { price.toString().replace('.', ',')}
+              { price.replace('.', ',') }
             </p>
             <img
               className="img-products"
@@ -84,7 +96,7 @@ function CustomerProducts() {
         ))
       }
       <button
-        onClick={ () => history.push('/customer/checkout') }
+        onClick={ () => pushToCheckout() }
         type="button"
         className="btn-checkout"
         data-testid="customer_products__button-cart"
