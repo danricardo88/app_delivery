@@ -12,7 +12,7 @@ function CustomerProducts() {
   const { token } = getLocalStorage('user');
 
   const getProducts = async () => {
-    const { data } = await axios.get('http://localhost:3001/products', { headers: { Authorization: { token } } });
+    const { data } = await axios.get('http://localhost:3001/products', { headers: { Authorization: token } });
     const cart = data.map((product) => ({ ...product, quantity: 0 }));
     setProductsDetais([[...cart], { totalPrice: 0.00 }]);
   };

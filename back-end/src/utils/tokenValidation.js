@@ -1,10 +1,6 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'secret_key';
-
-const confidential = SECRET;
-
 const jwtKey = fs.readFileSync('jwt.evaluation.key');
 
 const jwtConfig = {
@@ -14,7 +10,7 @@ const jwtConfig = {
 
 const createToken = (email) => {
   const token = jwt.sign({ email },
-    confidential, jwtConfig);
+    jwtKey, jwtConfig);
 
     return token;
 };
