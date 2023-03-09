@@ -25,7 +25,7 @@ function Login() {
     try {
       const response = await post('login', { email, password });
       userRegister = response;
-      const { name, email: userEmail, role, token } = userRegister;
+      const { name, email: userEmail, role, token } = userRegister.data;
       setLocalStorage('user', { name, email: userEmail, role, token });
     } catch (error) {
       userRegister = error;
