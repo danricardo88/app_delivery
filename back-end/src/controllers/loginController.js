@@ -14,7 +14,7 @@ const login = async (req, res) => {
   }
 
   const token = await tokenValidation.createToken(email);
-  return res.status(200).json({ token, name, role, id });
+  return res.status(200).json({ token, name, role, email, id });
 };
 
 const findAllUsers = async (_req, res) => {

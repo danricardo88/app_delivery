@@ -1,8 +1,11 @@
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 const SECRET = 'secret_key';
 
 const confidential = SECRET;
+
+const jwtKey = fs.readFileSync('jwt.evaluation.key');
 
 const jwtConfig = {
   algorithm: 'HS256',
@@ -19,7 +22,7 @@ const createToken = (email) => {
 const verifyTokenJWT = (token) => {
   try {
     if (!token) return { error: 'token not found' };
-    const payload = jwt.verify(token, confidential);
+    const payload = jwt.verify(token, jwtKey);
     if (!jwtConfig.expiresIn) return { error: 'Expired or invalid token' };
     return payload;
   } catch (err) {
