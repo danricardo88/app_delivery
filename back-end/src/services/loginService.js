@@ -11,7 +11,6 @@ const login = async (email, password) => {
   const { name, role, id } = userLogin;
   const token = await tokenValidation.createToken(email);
   return { error: false, message: { token, name, role, email, id } };
-
 };
 
 const findAllUsers = async () => {
