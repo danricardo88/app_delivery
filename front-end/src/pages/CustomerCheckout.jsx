@@ -1,16 +1,29 @@
-// import { reload } from 'pm2';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { post } from '../utils/api';
 import CustomerNavBar from '../components/CustomerNavBar';
 import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function CustomerCheckout() {
+  const [address, setAddress] = useState('');
+  const [addressNumber, setAddressNumber] = useState('');
+  const [venders, setVenders] = useState('');
+  const [sellers, setSellers] = useState([]);
   const items = getLocalStorage('CartItems');
   const total = items
     .reduce((acc, curr) => acc + (curr.quantity * curr.price), 0)
     .toFixed(2).replace('.', ',');
   const history = useHistory();
   console.log(items);
+
+  const getSellers = async () => {
+    const { data } = await axios.get('http://localhost:3001/login');
+    const result = data.filter((seller) => seller.role === 'seller');
+    setSellers([...result]);
+    setVenders(sellers[0]);
+    console.log(sellers);
+  };
 
   const removeItens = (i, e) => {
     e.preventDefault();
@@ -21,6 +34,33 @@ function CustomerCheckout() {
     setLocalStorage('CartItems', result);
     window.location.reload();
   };
+
+  const finishOrder = async (e) => {
+    e.preventDefault();
+    let registerSale;
+
+    const date = new Date().toISOString();
+    const vendersId = venders.id;
+    const userId = 3;
+    const status = 'Pendente';
+    try {
+      const response = await post(
+        'sales',
+        { userId, vendersId, total, address, addressNumber, date, status },
+      );
+      registerSale = response;
+      const { id } = registerSale.data;
+      // const { name, email: userEmail, role, token } = userRegister.data;
+      // setLocalStorage('user', { name, email: userEmail, role, token });
+      // history.push(`/customer/orders/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSellers();
+  }, []);
 
   return (
     <div>
@@ -104,27 +144,37 @@ function CustomerCheckout() {
       </span>
       <select
         name="venders"
-        id=""
+        defaultValue={ sellers[0].name }
+        onChange={ ({ target }) => setVenders(target.value) }
         data-testid="customer_checkout__select-seller"
       >
-        <option value="eu">eu</option>
+        {
+          sellers.map(({ name, id }) => (
+            <option key={ id } value={ name }>{ name }</option>
+          ))
+        }
       </select>
       <label htmlFor="address">
         <input
           type="text"
           name="address"
+          value={ address }
+          onChange={ ({ target }) => setAddress(target.value) }
           data-testid="customer_checkout__input-address"
         />
         Endereço
       </label>
       <input
         type="number"
+        name="adressNumber"
+        value={ addressNumber }
+        onChange={ ({ target }) => setAddressNumber(target.value) }
         data-testid="customer_checkout__input-address-number"
       />
       <button
         data-testid="customer_checkout__button-submit-order"
         type="submit"
-        onClick={ () => history.push('/customer/orders/') }
+        onClick={ (e) => finishOrder(e) }
       >
         Finalizar Pedido
       </button>
