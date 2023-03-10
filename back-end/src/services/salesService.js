@@ -18,9 +18,11 @@ const createSale = async ({
   const saleCreated = await Sale.create({
     userId, sellerId, totalPrice, deliveryAddress, deliveryNumber, saleDate, status,
   });
-  await Promise.all(products.map(async (product) => SalesProducts.create({
+  if (products) {
+      await Promise.all(products.map(async (product) => SalesProducts.create({
     productId: product.id, saleId: saleCreated.dataValues.id, quantity: product.quantity,
   })));
+  }
   return saleCreated;
 };
 

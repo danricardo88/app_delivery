@@ -1,21 +1,25 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { post } from '../utils/api';
 import CustomerNavBar from '../components/CustomerNavBar';
 import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function CustomerCheckout() {
   const [address, setAddress] = useState('');
   const [addressNumber, setAddressNumber] = useState('');
-  const [venders, setVenders] = useState([]);
+  const [venders, setVenders] = useState(2);
   const [sellers, setSellers] = useState([]);
+
   const items = getLocalStorage('CartItems');
+
   const total = items
     .reduce((acc, curr) => acc + (curr.quantity * curr.price), 0)
-    .toFixed(2).replace('.', ',');
+    .toFixed(2);
+
   const history = useHistory();
-  console.log(items);
+
+  const { token, id: userId } = getLocalStorage('user');
+  console.log(token);
 
   const getSellers = async () => {
     const { data } = await axios.get('http://localhost:3001/login');
@@ -35,23 +39,27 @@ function CustomerCheckout() {
 
   const finishOrder = async (e) => {
     e.preventDefault();
-    let registerSale;
-    console.log(sellers);
-    console.log(venders);
 
-    try {
-      const response = await post(
-        'sales/',
-        { total, address, addressNumber },
-      );
-      registerSale = response;
-      const { id } = registerSale.data;
-      const { name, email: userEmail, role, token } = userRegister.data;
-      setLocalStorage('user', { name, email: userEmail, role, token });
-      history.push(`/customer/orders/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
+    const date = new Date(Date.now()).toISOString();
+
+    const productsMap = (items.map(({ id, quantity }) => ({ productId: id, quantity })));
+
+    const response = await axios.post('http://localhost:3001/sales', {
+      userId,
+      sellerId: venders,
+      totalPrice: total,
+      deliveryAddress: address,
+      deliveryNumber: addressNumber,
+      saleDate: date,
+      status: 'Pendente',
+      products: productsMap.forEach((item) => {
+        const { productId } = item;
+        const { quantity } = item;
+        console.log(`productId: ${productId}, quantity: ${quantity}`);
+      }),
+    }, { headers: { Authorization: token } });
+
+    history.push(`/customer/orders/${response.data.id}`);
   };
 
   useEffect(() => {
@@ -128,11 +136,11 @@ function CustomerCheckout() {
           }
         </tr>
       </table>
+      <p> Valor Total R$:</p>
       <span
         data-testid="customer_checkout__element-order-total-price"
       >
-        Valor Total R$
-        { total }
+        { total.replace('.', ',') }
       </span>
       <br />
       <span>
@@ -143,7 +151,7 @@ function CustomerCheckout() {
         onChange={ ({ target }) => setVenders(target.value) }
         data-testid="customer_checkout__select-seller"
       >
-        <option value="escolha">Escolha o seu Vendedor</option>
+        Escolha o seu Vendedor
         {
           sellers.map(({ name, id }) => (
             <option key={ id } value={ id }>{ name }</option>
