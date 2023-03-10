@@ -8,7 +8,7 @@ import { getLocalStorage, setLocalStorage } from '../utils/storage';
 function CustomerCheckout() {
   const [address, setAddress] = useState('');
   const [addressNumber, setAddressNumber] = useState('');
-  const [venders, setVenders] = useState('');
+  const [venders, setVenders] = useState([]);
   const [sellers, setSellers] = useState([]);
   const items = getLocalStorage('CartItems');
   const total = items
@@ -21,8 +21,6 @@ function CustomerCheckout() {
     const { data } = await axios.get('http://localhost:3001/login');
     const result = data.filter((seller) => seller.role === 'seller');
     setSellers([...result]);
-    setVenders(sellers[0]);
-    console.log(sellers);
   };
 
   const removeItens = (i, e) => {
@@ -38,21 +36,19 @@ function CustomerCheckout() {
   const finishOrder = async (e) => {
     e.preventDefault();
     let registerSale;
+    console.log(sellers);
+    console.log(venders);
 
-    const date = new Date().toISOString();
-    const vendersId = venders.id;
-    const userId = 3;
-    const status = 'Pendente';
     try {
       const response = await post(
-        'sales',
-        { userId, vendersId, total, address, addressNumber, date, status },
+        'sales/',
+        { total, address, addressNumber },
       );
       registerSale = response;
       const { id } = registerSale.data;
-      // const { name, email: userEmail, role, token } = userRegister.data;
-      // setLocalStorage('user', { name, email: userEmail, role, token });
-      // history.push(`/customer/orders/${id}`);
+      const { name, email: userEmail, role, token } = userRegister.data;
+      setLocalStorage('user', { name, email: userEmail, role, token });
+      history.push(`/customer/orders/${id}`);
     } catch (error) {
       console.log(error);
     }
@@ -144,13 +140,13 @@ function CustomerCheckout() {
       </span>
       <select
         name="venders"
-        defaultValue={ sellers[0].name }
         onChange={ ({ target }) => setVenders(target.value) }
         data-testid="customer_checkout__select-seller"
       >
+        <option value="escolha">Escolha o seu Vendedor</option>
         {
           sellers.map(({ name, id }) => (
-            <option key={ id } value={ name }>{ name }</option>
+            <option key={ id } value={ id }>{ name }</option>
           ))
         }
       </select>
