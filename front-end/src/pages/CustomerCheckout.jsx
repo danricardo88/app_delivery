@@ -19,13 +19,16 @@ function CustomerCheckout() {
   const history = useHistory();
 
   const { token, id: userId } = getLocalStorage('user');
-  console.log(token);
 
   const getSellers = async () => {
     const { data } = await axios.get('http://localhost:3001/login');
     const result = data.filter((seller) => seller.role === 'seller');
     setSellers([...result]);
   };
+
+  useEffect(() => {
+    getSellers();
+  }, []);
 
   const removeItens = (i, e) => {
     e.preventDefault();
@@ -37,12 +40,14 @@ function CustomerCheckout() {
     window.location.reload();
   };
 
-  const finishOrder = async (e) => {
-    e.preventDefault();
-
+  const finishOrder = async () => {
     const date = new Date(Date.now()).toISOString();
 
-    const productsMap = (items.map(({ id, quantity }) => ({ productId: id, quantity })));
+    const productsMap = (items.map(({ id, quantity }) => ({ productId: id, quantity })))
+      .forEach((item) => {
+        const { productId, quantity } = item;
+        console.log(`productId: ${productId}, quantity: ${quantity}`);
+      });
 
     const response = await axios.post('http://localhost:3001/sales', {
       userId,
@@ -52,19 +57,11 @@ function CustomerCheckout() {
       deliveryNumber: addressNumber,
       saleDate: date,
       status: 'Pendente',
-      products: productsMap.forEach((item) => {
-        const { productId } = item;
-        const { quantity } = item;
-        console.log(`productId: ${productId}, quantity: ${quantity}`);
-      }),
+      products: productsMap,
     }, { headers: { Authorization: token } });
 
     history.push(`/customer/orders/${response.data.id}`);
   };
-
-  useEffect(() => {
-    getSellers();
-  }, []);
 
   return (
     <div>
@@ -178,7 +175,7 @@ function CustomerCheckout() {
       <button
         data-testid="customer_checkout__button-submit-order"
         type="submit"
-        onClick={ (e) => finishOrder(e) }
+        onClick={ finishOrder }
       >
         Finalizar Pedido
       </button>
