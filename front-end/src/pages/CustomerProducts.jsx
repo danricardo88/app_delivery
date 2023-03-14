@@ -2,15 +2,17 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import CustomerNavBar from '../components/CustomerNavBar';
-import { setLocalStorage } from '../utils/storage';
+import { setLocalStorage, getLocalStorage } from '../utils/storage';
 
 function CustomerProducts() {
   const [qnt, setQnt] = useState(0);
   const [productsDetails, setProductsDetais] = useState(false);
   const history = useHistory();
 
+  const { token } = getLocalStorage('user');
+
   const getProducts = async () => {
-    const { data } = await axios.get('http://localhost:3001/products');
+    const { data } = await axios.get('http://localhost:3001/products', { headers: { Authorization: token } });
     const cart = data.map((product) => ({ ...product, quantity: 0 }));
     setProductsDetais([[...cart], { totalPrice: 0.00 }]);
   };
@@ -40,7 +42,7 @@ function CustomerProducts() {
     );
     const result = productsDetails[0].filter((product) => product.quantity > 0);
     for (let i = 0; i < result.length; i += 1) {
-      result[i].id = i;
+      result[i].cartId = i;
     }
     setLocalStorage('CartItems', result);
     history.push('/customer/checkout');
