@@ -6,7 +6,7 @@ import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function CustomerCheckout() {
   const [address, setAddress] = useState('');
-  const [addressNumber, setAddressNumber] = useState('');
+  const [addressNumber, setAddressNumber] = useState(0);
   const [venders, setVenders] = useState(2);
   const [sellers, setSellers] = useState([]);
 
@@ -32,9 +32,9 @@ function CustomerCheckout() {
 
   const removeItens = (i, e) => {
     e.preventDefault();
-    const result = items.filter((item) => item.id !== i);
+    const result = items.filter((item) => item.cartId !== i);
     for (let x = 0; x < result.length; x += 1) {
-      result[x].id = x;
+      result[x].cartId = x;
     }
     setLocalStorage('CartItems', result);
     window.location.reload();
@@ -42,17 +42,26 @@ function CustomerCheckout() {
 
   const finishOrder = async () => {
     const date = new Date(Date.now()).toISOString();
-
-    const productsMap = (items.map(({ id, quantity }) => ({ productId: id, quantity })))
+    const realTotal = parseFloat(total);
+    console.log(realTotal);
+    const productsMap = [];
+    (items.map(
+      (
+        { id, quantity },
+      ) => ({ productId: id, quantity }),
+    ))
       .forEach((item) => {
         const { productId, quantity } = item;
         console.log(`productId: ${productId}, quantity: ${quantity}`);
+        return productsMap.push(item);
       });
+    console.log(productsMap);
+    console.log(userId);
 
     const response = await axios.post('http://localhost:3001/sales', {
-      userId,
+      userId: 1,
       sellerId: venders,
-      totalPrice: total,
+      totalPrice: realTotal,
       deliveryAddress: address,
       deliveryNumber: addressNumber,
       saleDate: date,
@@ -79,51 +88,51 @@ function CustomerCheckout() {
       <table>
         <tr>
           {
-            items.map(({ id, name, price, quantity }) => (
+            items.map(({ id, cartId, name, price, quantity }) => (
               <div key={ id }>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-item-number-${id}`
+                    `customer_checkout__element-order-table-item-number-${cartId}`
                   }
                 >
-                  {id + 1}
+                  {cartId + 1}
                 </td>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-name-${id}`
+                    `customer_checkout__element-order-table-name-${cartId}`
                   }
                 >
                   { `Cerveja ${name}` }
                 </td>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-quantity-${id}`
+                    `customer_checkout__element-order-table-quantity-${cartId}`
                   }
                 >
                   { quantity }
                 </td>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-unit-price-${id}`
+                    `customer_checkout__element-order-table-unit-price-${cartId}`
                   }
                 >
                   { (price).replace('.', ',') }
                 </td>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-sub-total-${id}`
+                    `customer_checkout__element-order-table-sub-total-${cartId}`
                   }
                 >
                   { (price * quantity).toFixed(2).replace('.', ',') }
                 </td>
                 <td
                   data-testid={
-                    `customer_checkout__element-order-table-remove-${id}`
+                    `customer_checkout__element-order-table-remove-${cartId}`
                   }
                 >
                   <button
                     type="submit"
-                    onClick={ (e) => removeItens(id, e) }
+                    onClick={ (e) => removeItens(cartId, e) }
                   >
                     Remover
                   </button>

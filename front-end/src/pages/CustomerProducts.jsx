@@ -42,7 +42,7 @@ function CustomerProducts() {
     );
     const result = productsDetails[0].filter((product) => product.quantity > 0);
     for (let i = 0; i < result.length; i += 1) {
-      result[i].id = i;
+      result[i].cartId = i;
     }
     setLocalStorage('CartItems', result);
     history.push('/customer/checkout');
