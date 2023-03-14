@@ -6,7 +6,7 @@ import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function CustomerCheckout() {
   const [address, setAddress] = useState('');
-  const [addressNumber, setAddressNumber] = useState(0);
+  const [addressNumber, setAddressNumber] = useState();
   const [venders, setVenders] = useState(2);
   const [sellers, setSellers] = useState([]);
 
@@ -59,7 +59,7 @@ function CustomerCheckout() {
     console.log(userId);
 
     const response = await axios.post('http://localhost:3001/sales', {
-      userId: 1,
+      userId,
       sellerId: venders,
       totalPrice: realTotal,
       deliveryAddress: address,

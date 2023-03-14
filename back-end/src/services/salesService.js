@@ -20,7 +20,7 @@ const createSale = async ({
   });
   if (products) {
       await Promise.all(products.map(async (product) => SalesProducts.create({
-    productId: product.id, saleId: saleCreated.dataValues.id, quantity: product.quantity,
+    productId: product.productId, saleId: saleCreated.dataValues.id, quantity: product.quantity,
   })));
   }
   return saleCreated;
