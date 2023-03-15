@@ -1,8 +1,8 @@
 // import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { post } from '../utils/api';
-import { setLocalStorage } from '../utils/storage';
+import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -37,6 +37,11 @@ function Login() {
 
     history.push('/customer/products');
   };
+
+  useEffect(() => {
+    const user = getLocalStorage('user');
+    if (user) history.push(`/${user.role}/products`);
+  }, []);
 
   return (
     <div>

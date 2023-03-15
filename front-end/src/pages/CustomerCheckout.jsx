@@ -69,6 +69,8 @@ function CustomerCheckout() {
       products: productsMap,
     }, { headers: { Authorization: token } });
 
+    setLocalStorage('SaleId', response.data.id);
+
     history.push(`/customer/orders/${response.data.id}`);
   };
 
