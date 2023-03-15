@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import CustomerNavBar from '../components/CustomerNavBar';
+
 import { getLocalStorage } from '../utils/storage';
 
 function CustomerOrders() {
@@ -10,7 +12,7 @@ function CustomerOrders() {
   const getOrders = async () => {
     const { data } = await axios.get(`http://localhost:3001/sales/customer/${userId}`);
     setOrders(data);
-    console.log(orders);
+    console.log(data);
   };
 
   useEffect(() => {
@@ -24,20 +26,29 @@ function CustomerOrders() {
       </div>
       {
         orders.map(({ id, totalPrice, status, saleDate }) => (
-          <div key={ id }>
-            <div data-testid={ `customer_orders__element-order-id-${id}` }>
-              {id}
+          <Link
+            key={ id }
+            to={ `/customer/orders/${id}` }
+          >
+            <div key={ id } id={ id }>
+              <div data-testid={ `customer_orders__element-order-id-${id}` }>
+                {id}
+              </div>
+              <div data-testid={ `customer_orders__element-delivery-status-${id}` }>
+                {status}
+              </div>
+              <div data-testid={ `customer_orders__element-order-date-${id}` }>
+                {
+                  `${new Date(saleDate).getDate()
+                  }/0${new Date(saleDate).getMonth() + 1}/${
+                    new Date(saleDate).getFullYear()}`
+                }
+              </div>
+              <div data-testid={ `customer_orders__element-card-price-${id}` }>
+                {totalPrice.replace('.', ',')}
+              </div>
             </div>
-            <div data-testid={ `customer_orders__element-delivery-status-${id}` }>
-              {status}
-            </div>
-            <div data-testid={ `customer_orders__element-order-date-${id}` }>
-              {saleDate}
-            </div>
-            <div data-testid={ `customer_orders__element-card-price-${id}` }>
-              {totalPrice}
-            </div>
-          </div>
+          </Link>
         ))
       }
     </div>
