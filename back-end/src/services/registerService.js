@@ -6,10 +6,10 @@ const { createToken } = require('../utils/tokenValidation');
 const register = async ({ name, email, password }) => {
   const role = 'customer';
   const hash = md5(password);
-  await User.create({ name, email, password: hash, role });
+  const { id } = await User.create({ name, email, password: hash, role });
 
   const token = await createToken(email, role);
-  return { token, email, role, name, password: hash };
+  return { id, token, email, role, name, password: hash };
 };
 
 const findUser = async (user) => {
