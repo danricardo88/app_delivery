@@ -27,6 +27,16 @@ function Login() {
       userRegister = response;
       const { name, id, email: userEmail, role, token } = userRegister.data;
       setLocalStorage('user', { name, id, email: userEmail, role, token });
+
+      if (role === 'administrator') {
+        return history.push('/admin/manage');
+      }
+
+      if (role === 'seller') {
+        return history.push('/seller/orders');
+      }
+
+      history.push('/customer/products');
     } catch (error) {
       userRegister = error;
     }
@@ -34,13 +44,27 @@ function Login() {
     if (userRegister.response) {
       return setErrorMessage(userRegister.response);
     }
+  };
 
-    history.push('/customer/products');
+  const user = getLocalStorage('user');
+  const checkLogin = () => {
+    if (user && user?.token) {
+      if (user.role === 'administrator') {
+        return history.push('/admin/manage');
+      }
+
+      if (user.role === 'seller') {
+        return history.push('/seller/orders');
+      }
+
+      history.push('/customer/products');
+    }
   };
 
   useEffect(() => {
-    const user = getLocalStorage('user');
-    if (user) history.push(`/${user.role}/products`);
+    // const user = getLocalStorage('user');
+    // if (user) history.push(`/${user.role}/products`);
+    checkLogin();
   }, []);
 
   return (

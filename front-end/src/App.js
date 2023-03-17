@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import CustomerProducts from './pages/CustomerProducts';
 import './App.css';
 import CustomerCheckout from './pages/CustomerCheckout';
+import Admin from './pages/Admin';
 import CustomerOrders from './pages/CustomerOrders';
 import CustomerOrdersDetails from './pages/CustomerOrdersDetails';
 
@@ -21,7 +22,7 @@ function App() {
         <Route exact path="/customer/checkout" component={ CustomerCheckout } />
         <Route exact path="/customer/orders" component={ CustomerOrders } />
         <Route exact path="/customer/orders/:id" component={ CustomerOrdersDetails } />
-
+        <Route exact path="/admin/manage" component={ Admin } />
       </Switch>
     </div>
   );
