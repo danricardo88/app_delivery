@@ -1,8 +1,7 @@
-// import axios from 'axios';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { post } from '../utils/api';
-import { setLocalStorage } from '../utils/storage';
+import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../utils/storage';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -16,6 +15,8 @@ function Login() {
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
   };
+
+  const { pathname } = useLocation();
   const history = useHistory();
 
   const login = async (e) => {
@@ -27,6 +28,28 @@ function Login() {
       userRegister = response;
       const { name, email: userEmail, role, token } = userRegister.data;
       setLocalStorage('user', { name, email: userEmail, role, token });
+
+      const IsLoginOrRegisterPage = ['/login', '/register'].includes(pathname);
+      const userData = getLocalStorage('user');
+
+      const homepages = {
+        customer: '/customer/products',
+        seller: '/seller/orders',
+        administrator: '/admin/manage',
+      };
+
+      if (!userData && !IsLoginOrRegisterPage) {
+        console.log('Sem user data e não é rota de login');
+        clearLocalStorage('user');
+        clearLocalStorage('cart');
+        history.push('/login');
+      } else if (!IsLoginOrRegisterPage) {
+        console.log('Não é rota de login');
+        setLocalStorage('user', { name, email: userEmail, role, token });
+        setLocalStorage('cart', JSON.stringify(cart));
+      } else {
+        history.push(homepages[userData.role], { replace: true });
+      }
     } catch (error) {
       userRegister = error;
     }
@@ -34,8 +57,6 @@ function Login() {
     if (userRegister.response) {
       return setErrorMessage(userRegister.response);
     }
-
-    history.push('/customer/products');
   };
 
   return (
