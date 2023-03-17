@@ -21,7 +21,7 @@ function CustomerNavBar() {
     <nav>
       <div>
         <Link
-          to="/customer/produtcs"
+          to="/customer/products"
           data-testid="customer_products__element-navbar-link-products"
         >
           Produtos

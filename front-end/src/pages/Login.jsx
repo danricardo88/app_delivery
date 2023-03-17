@@ -27,6 +27,7 @@ function Login() {
       userRegister = response;
       const { name, id, email: userEmail, role, token } = userRegister.data;
       setLocalStorage('user', { name, id, email: userEmail, role, token });
+      
       if (role === 'administrator') {
         return history.push('/admin/manage');
       }

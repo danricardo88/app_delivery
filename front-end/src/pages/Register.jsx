@@ -25,6 +25,8 @@ function Register() {
     try {
       const response = await post('register', { email, password, name });
       userRegister = response;
+      const { id } = response.data;
+      setLocalStorage('user', { id, name, email });
     } catch (error) {
       userRegister = error;
     }
@@ -32,8 +34,6 @@ function Register() {
     if (userRegister.response) {
       return setErrorMessage(userRegister.response);
     }
-
-    setLocalStorage('user', { name, email });
 
     history.push('/customer/products');
   };
