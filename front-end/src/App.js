@@ -9,7 +9,6 @@ import Admin from './pages/Admin';
 import CustomerOrders from './pages/CustomerOrders';
 import CustomerOrdersDetails from './pages/CustomerOrdersDetails';
 
-
 function App() {
   return (
     <div className="App">
