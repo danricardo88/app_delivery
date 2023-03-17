@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+// import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { post } from '../utils/api';
-import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../utils/storage';
+import { getLocalStorage, setLocalStorage } from '../utils/storage';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -15,8 +16,6 @@ function Login() {
     const passwordCondition = password.length > minLength;
     return !(emailCondition && passwordCondition);
   };
-
-  const { pathname } = useLocation();
   const history = useHistory();
 
   const login = async (e) => {
@@ -26,30 +25,17 @@ function Login() {
     try {
       const response = await post('login', { email, password });
       userRegister = response;
-      const { name, email: userEmail, role, token } = userRegister.data;
-      setLocalStorage('user', { name, email: userEmail, role, token });
-
-      const IsLoginOrRegisterPage = ['/login', '/register'].includes(pathname);
-      const userData = getLocalStorage('user');
-
-      const homepages = {
-        customer: '/customer/products',
-        seller: '/seller/orders',
-        administrator: '/admin/manage',
-      };
-
-      if (!userData && !IsLoginOrRegisterPage) {
-        console.log('Sem user data e não é rota de login');
-        clearLocalStorage('user');
-        clearLocalStorage('cart');
-        history.push('/login');
-      } else if (!IsLoginOrRegisterPage) {
-        console.log('Não é rota de login');
-        setLocalStorage('user', { name, email: userEmail, role, token });
-        setLocalStorage('cart', JSON.stringify(cart));
-      } else {
-        history.push(homepages[userData.role], { replace: true });
+      const { name, id, email: userEmail, role, token } = userRegister.data;
+      setLocalStorage('user', { name, id, email: userEmail, role, token });
+      if (role === 'administrator') {
+        return history.push('/admin/manage');
       }
+
+      if (role === 'seller') {
+        return history.push('/seller/orders');
+      }
+
+      history.push('/customer/products');
     } catch (error) {
       userRegister = error;
     }
@@ -58,6 +44,27 @@ function Login() {
       return setErrorMessage(userRegister.response);
     }
   };
+
+  const user = getLocalStorage('user');
+  const checkLogin = () => {
+    if (user && user?.token) {
+      if (user.role === 'administrator') {
+        return history.push('/admin/manage');
+      }
+
+      if (user.role === 'seller') {
+        return history.push('/seller/orders');
+      }
+
+      history.push('/customer/products');
+    }
+  };
+
+  useEffect(() => {
+    // const user = getLocalStorage('user');
+    // if (user) history.push(`/${user.role}/products`);
+    checkLogin();
+  }, []);
 
   return (
     <div>
